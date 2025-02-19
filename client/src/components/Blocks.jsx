@@ -36,7 +36,7 @@ const Blocks = () => {
   useEffect(() => {
     getPendingTasks();
     getTask();
-  }, [isModalOpen]);
+  }, [isModalOpen, filterTask]);
   return (
     <>
       <div className="relative col-span-6 h-[500px] overflow-y-scroll bg-[#272727]/60 text-white rounded-lg">
