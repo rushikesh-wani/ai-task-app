@@ -99,8 +99,10 @@ const AddTask = () => {
 
       {isModalOpen && (
         <Modal
-          title={"Lock Email"}
-          description={"Lock your email until its necessary..."}
+          title={"Add Task"}
+          description={
+            "Add your task with the description and priority of task..."
+          }
           isOpen={isModalOpen}
           onClose={(e) => {
             e.preventDefault();

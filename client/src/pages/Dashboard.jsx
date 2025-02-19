@@ -35,7 +35,7 @@ const Dashboard = () => {
                   to={"/add-task"}
                   className="px-2 py-1 sm:px-4 sm:py-2 text-center bg-violet-700 rounded-lg text-white sm:text-lg font-semibold"
                 >
-                  Add Email
+                  Add Task
                 </Link>
                 <Link
                   to={"/login"}

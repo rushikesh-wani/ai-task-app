@@ -11,7 +11,11 @@ export const signup = async (formData) => {
     return res?.data;
   } catch (error) {
     console.log(error);
-    toast.warning(error?.response?.data?.err || error?.response?.err);
+    toast.warning(
+      error?.response?.data?.err ||
+        error?.response?.data?.message ||
+        "Something went wrong!"
+    );
   }
 };
 
@@ -26,6 +30,10 @@ export const login = async (formData) => {
     }
   } catch (err) {
     console.log(err);
-    toast.error(err?.response?.data?.err);
+    toast.error(
+      err?.response?.data?.err ||
+        err?.response?.data?.message ||
+        "Something went wrong!"
+    );
   }
 };
