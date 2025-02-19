@@ -9,7 +9,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: true,
+    origin: "https://ai-tasks.vercel.app/",
     credentials: true,
   })
 );
