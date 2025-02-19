@@ -1,7 +1,10 @@
 const mongoose = require("mongoose");
 
 const connectDB = async () => {
-  await mongoose.connect(process.env.MONGO_URI);
+  const options = {
+    dbName: "task",
+  };
+  await mongoose.connect(process.env.MONGO_URI, options);
 };
 
 module.exports = { connectDB };
