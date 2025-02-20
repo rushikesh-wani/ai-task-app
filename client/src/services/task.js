@@ -13,8 +13,6 @@ export const addTask = async (formData) => {
     if (response?.status === 201) {
       toast.success("Task Added Successfully!");
     }
-
-    console.log(data);
   } catch (error) {
     console.error(error);
   }
@@ -43,18 +41,14 @@ export const getFilterTasks = async (status) => {
         "Content-Type": "application/json",
       },
     });
-    return res?.data;
+    return res?.data?.data;
   } catch (err) {
     console.log(err);
     toast.error("Error fetching the tasks! Reload the page");
   }
 };
 
-export const handleTaskCompletion = async (
-  taskId,
-  setCompletedTasks,
-  fetchedAll
-) => {
+export const handleTaskCompletion = async (taskId, getPendingTasks) => {
   try {
     const response = await api.post(
       `/task/complete/${taskId}`,
@@ -68,9 +62,8 @@ export const handleTaskCompletion = async (
     );
 
     if (response.status === 200) {
-      setCompletedTasks({});
       toast.success("Task marked as completed!");
-      fetchedAll();
+      await getPendingTasks();
     }
   } catch (error) {
     console.error("Failed to update task status:", error);
@@ -105,5 +98,35 @@ export const editTask = async (formData) => {
         err?.response?.data?.message ||
         "something went wrong!"
     );
+  }
+};
+
+export const deleteTaskService = async (
+  taskId,
+  filteredTasks,
+  setFilteredTasks
+) => {
+  try {
+    const res = await api.delete(
+      `/task/delete/${taskId}`,
+
+      {
+        headers: {
+          Authorization: localStorage.getItem("token"),
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (res.status === 200) {
+      toast.success(res?.data?.data?.message || "Task deleted successfully!");
+    }
+  } catch (err) {
+    toast.error(
+      err?.response?.data?.err ||
+        err?.response?.data?.message ||
+        "something went wrong!"
+    );
+    console.log(err);
   }
 };

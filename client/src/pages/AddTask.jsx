@@ -46,30 +46,37 @@ const AddTask = () => {
     <>
       <div className="mt-5 col-span-10">
         <div className="mb-10 w-full text-center text-white">
-          <p className="inline-flex gap-2 items-center justify-center px-4 py-2 bg-white/5 border border-gray-500 rounded-lg">
+          <p className="inline-flex gap-2 items-center justify-center px-4 py-2 bg-gradient-to-r from-white/30 via-50% to-white/5 border border-gray-500 rounded-lg">
             <Zap />
             AI-Powered Task Generation: Smart, Fast, and Effortless!
           </p>
         </div>
-        <div className="w-full inline-flex items-center justify-center gap-4 text-white">
-          <input
-            className="w-xl px-4 py-2 bg-black/50 rounded-lg ring-0 focus:outline-none"
-            placeholder="Enter the task..."
-            onChange={(e) => {
-              setTask([]);
-              setPrompt(e.target.value);
-            }}
-          />
-          <div className="relative">
-            <div className="absolute -inset-1 rounded-xl blur-sm bg-gradient-to-r from-rose-800 via-violet-600 to-blue-600"></div>
-            <button
-              onClick={handler}
-              className="inline-flex gap-1 items-center justify-center bg-white/40 backdrop-filter backdrop-blur-sm text-black ring-2 ring-white/5 px-5 py-1 text-lg font-semibold rounded-lg cursor-pointer"
-            >
-              <Sparkles className="size-5" /> AI Anaylse
-            </button>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handler();
+          }}
+        >
+          <div className="w-full inline-flex items-center justify-center gap-4 text-white">
+            <input
+              className="w-xl px-4 py-2 bg-black/50 text-xl rounded-lg ring-0 focus:outline-none"
+              placeholder="Enter the prompt for task..."
+              onChange={(e) => {
+                setTask([]);
+                setPrompt(e.target.value);
+              }}
+            />
+            <div className="relative">
+              <div className="absolute -inset-1 rounded-xl blur-sm bg-gradient-to-r from-rose-800 via-violet-600 to-blue-600"></div>
+              <button
+                type="submit"
+                className="inline-flex gap-1 items-center justify-center bg-white/40 backdrop-filter backdrop-blur-sm text-black ring-2 ring-white/5 px-5 py-2 text-lg font-semibold rounded-lg cursor-pointer"
+              >
+                <Sparkles className="size-5" /> AI Anaylse
+              </button>
+            </div>
           </div>
-        </div>
+        </form>
         <div className="p-5 flex flex-col gap-2">
           {isLoading && (
             <p className="w-[70%] mx-auto h-10 bg-white/20 rounded-lg animate-pulse"></p>

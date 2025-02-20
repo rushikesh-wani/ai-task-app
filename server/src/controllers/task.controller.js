@@ -23,7 +23,9 @@ const generateAITasks = async (req, res) => {
     });
   } catch (error) {
     console.error("Error generating tasks:", error);
-    res.status(500).json({ err: "Error generating tasks" });
+    res
+      .status(500)
+      .json({ message: "Error generating tasks", err: error.message });
   }
 };
 

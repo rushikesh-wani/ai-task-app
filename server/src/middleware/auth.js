@@ -15,7 +15,7 @@ const auth = async (req, res, next) => {
 
     const isUserAuthenticated = await User.findOne({ _id, email, name });
     if (!isUserAuthenticated) {
-      return res.status(400).json({ err: "Token is not Valid" });
+      return res.status(401).json({ err: "Token is not Valid" });
     }
 
     req.user = isUserAuthenticated;
@@ -23,8 +23,8 @@ const auth = async (req, res, next) => {
   } catch (err) {
     console.error("Auth Middleware Error:", err);
     return res
-      .status(500)
-      .json({ message: "JWT verification failed", err: err.message });
+      .status(401)
+      .json({ message: err.message, err: "Token is not Valid" });
   }
 };
 

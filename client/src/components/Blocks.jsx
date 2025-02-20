@@ -1,26 +1,29 @@
 import {
   Calendar,
-  CircleCheck,
-  LayoutDashboard,
   LetterText,
+  ListFilter,
   ListTodo,
-  Mails,
-  ScanSearch,
+  Pencil,
   Text,
+  Trash2,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import {
+  deleteTaskService,
   editTask,
   getAllTasks,
   getFilterTasks,
   handleTaskCompletion,
 } from "../services/task";
 import Modal from "./Modal";
+import noFound from "../assets/noFound.svg";
+import { formatDate } from "../utils/helper";
+import CardSkeleton from "./skeleton/CardSkeleton";
 
 const Blocks = () => {
-  const [task, setTask] = useState();
+  const [task, setTask] = useState([]);
   const [filterTask, setFilterTask] = useState("completed");
-  const [filteredTasks, setFilteredTasks] = useState({});
+  const [filteredTasks, setFilteredTasks] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editData, setEditData] = useState();
 
@@ -37,6 +40,8 @@ const Blocks = () => {
     getPendingTasks();
     getTask();
   }, [isModalOpen, filterTask]);
+  console.log("filtered Data => ", filteredTasks);
+
   return (
     <>
       <div className="relative col-span-6 h-[500px] overflow-y-scroll bg-[#272727]/60 text-white rounded-lg">
@@ -44,51 +49,68 @@ const Blocks = () => {
           <ListTodo /> Schedule Tasks
         </h2>
         <div className="px-1 my-2 sm:px-4 sm:my-4 flex flex-col gap-2">
-          {task?.length === 0 && (
-            <div className="mt-24 flex flex-col items-center justify-center gap-4">
-              <ScanSearch className="size-24" />
+          {}
+          {!task ? (
+            [...Array(5)].map((_, idx) => <CardSkeleton key={{ idx }} />)
+          ) : task?.length === 0 ? (
+            <div className="mt-20 flex flex-col items-center justify-center gap-1">
+              <img
+                src={noFound}
+                alt="no-result-found"
+                className="w-full h-32"
+              />
               <p className="text-center">No task added! Go to add task...</p>
             </div>
-          )}
-          {task?.map((item, idx) => (
-            <div key={item._id} className="p-2 w-full bg-black/50 rounded-lg ">
-              <div className="grid grid-flow-col grid-cols-16 grid-rows-1 items-center">
-                <div className="col-span-1">
-                  <input
-                    type="radio"
-                    id={item.id}
-                    checked={filteredTasks[item._id] || false}
-                    onChange={() => {
-                      handleTaskCompletion(
-                        item._id,
-                        setFilteredTasks,
-                        getPendingTasks
-                      );
-                    }}
-                    className="size-6"
-                  />
-                </div>
-                <div className="col-span-15">
-                  <p className="w-full truncate text-lg sm:text-lg font-semibold">
-                    {item?.topic}
-                  </p>
-
-                  <p className="text-xs inline-flex items-center gap-1 font-semibold">
-                    <Calendar className="size-4" />{" "}
-                    {Date(item?.createAt).toLocaleString()}
-                  </p>
-                  <div className="text-xs px-3 py-1 uppercase bg-white/10 w-fit rounded-lg">
-                    #{item?.priority}
+          ) : (
+            task?.map((item, idx) => (
+              <div
+                key={item._id}
+                className="p-2 w-full bg-gradient-to-l from-white/20 via-45% to-100% rounded-lg hover:bg-black/50"
+              >
+                <div className="grid grid-flow-col grid-cols-16 grid-rows-1 items-center">
+                  <div className="col-span-1">
+                    <input
+                      type="radio"
+                      id={item.id}
+                      checked={filteredTasks[item._id] || false}
+                      onChange={() => {
+                        handleTaskCompletion(item._id, getPendingTasks);
+                      }}
+                      className="size-6"
+                    />
+                  </div>
+                  <div className="col-span-15">
+                    <p className="w-full truncate text-lg sm:text-lg font-semibold">
+                      {item?.topic}
+                    </p>
+                    <div className="w-full inline-flex justify-between items-center">
+                      <div className="inline-flex items-center gap-1 text-xs px-2 py-2 uppercase bg-white/10 w-fit rounded-lg">
+                        <div
+                          className={`size-3 rounded-full ${
+                            item?.priority === "low"
+                              ? "bg-green-600"
+                              : item?.priority === "medium"
+                              ? "bg-yellow-500"
+                              : "bg-red-600"
+                          }`}
+                        ></div>
+                        {item?.priority}
+                      </div>
+                      <p className="text-xs inline-flex items-center gap-1 font-semibold">
+                        <Calendar className="size-4" />{" "}
+                        {formatDate(item?.createdAt)}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
       <div className="hidden sm:block relative col-span-4 h-[500px] overflow-y-scroll bg-[#272727]/60 text-white rounded-lg">
         <h2 className="w-full inline-flex items-center gap-2 px-6 py-2 text-xl font-semibold bg-[#272727]/10 backdrop-filter backdrop-blur-sm shadow-md">
-          <CircleCheck /> Filter
+          <ListFilter /> Filter
         </h2>
         <div className="sticky top-0  text-sm bg-[#272727]/10 backdrop-filter backdrop-blur-sm py-2 px-2 overflow-x-scroll flex gap-4">
           <button
@@ -148,36 +170,76 @@ const Blocks = () => {
           </button>
         </div>
         <div className="flex flex-col divide-y">
-          {filteredTasks?.data?.length == 0 && (
-            <p className="text-center mt-10">No Task Found!</p>
-          )}
-          {filteredTasks?.data?.map((item, idx) => (
-            <div
-              key={idx}
-              onClick={() => {
-                setIsModalOpen(true);
-
-                const { _id, topic, description, priority, status } = item;
-                setEditData({ _id, topic, description, priority, status });
-                console.log(editData);
-              }}
-              className="p-3 w-full hover:bg-black/50 hover:cursor-pointer"
-            >
-              <div className="flex items-center gap-2">
-                <div className="w-[10%]">
-                  <p className="p-2 size-7 inline-flex justify-center items-center rounded-full text-black font-bold bg-white">
-                    {idx + 1}
-                  </p>
-                </div>
-                <div className="w-[90%]">
-                  <p className="text-lg font-semibold">{item?.topic}</p>
-                  <p className="text-gray-400 text-sm line-clamp-2">
-                    {item?.description}
-                  </p>
+          {!filteredTasks ? (
+            [...Array(5)].map((_, idx) => <CardSkeleton key={idx * idx} />)
+          ) : filteredTasks?.length === 0 ? (
+            <div className="mt-20 flex flex-col items-center justify-center gap-1">
+              <img
+                src={noFound}
+                alt="no-result-found"
+                className="w-full h-32"
+              />
+              <p className="text-center">No Task Found!</p>
+            </div>
+          ) : (
+            filteredTasks?.map((item, idx) => (
+              <div key={idx} className="p-3 w-full hover:bg-black/50">
+                <div className="flex items-center gap-2">
+                  <div className="w-[10%]">
+                    <p className="p-2 size-7 inline-flex justify-center items-center rounded-full text-black font-bold bg-white">
+                      {idx + 1}
+                    </p>
+                  </div>
+                  <div className="w-[70%]">
+                    <p className="text-lg font-semibold truncate">
+                      {item?.topic}
+                    </p>
+                    <p className="text-gray-400 text-sm line-clamp-2">
+                      {item?.description}
+                    </p>
+                  </div>
+                  <div className="w-[20%] flex items-center justify-center gap-2">
+                    <button
+                      onClick={() => {
+                        setIsModalOpen(true);
+                        const { _id, topic, description, priority, status } =
+                          item;
+                        setEditData({
+                          _id,
+                          topic,
+                          description,
+                          priority,
+                          status,
+                        });
+                        console.log(editData);
+                      }}
+                      className="p-2 size-8 rounded-full bg-green-500 items-center cursor-pointer"
+                    >
+                      <Pencil className="size-4" />
+                    </button>
+                    <button
+                      onClick={async () => {
+                        await deleteTaskService(item._id);
+                        const newFilterTask = filteredTasks?.filter(
+                          (task) => task?._id !== item._id
+                        );
+                        console.log(item?._id);
+                        console.log(newFilterTask);
+                        setFilteredTasks(newFilterTask);
+                        const refreshTakes = task?.filter(
+                          (task) => task._id !== item._id
+                        );
+                        setTask(refreshTakes);
+                      }}
+                      className="p-2 size-8 rounded-full bg-rose-600 items-center cursor-pointer"
+                    >
+                      <Trash2 className="size-4" />
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
       {isModalOpen && (

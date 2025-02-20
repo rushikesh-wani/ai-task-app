@@ -14,7 +14,13 @@ const Login = () => {
         <div className="max-w-6xl h-screen mx-auto">
           <form
             className="w-full h-full flex justify-center items-center"
-            onSubmit={(e) => e.preventDefault()}
+            onSubmit={async (e) => {
+              e.preventDefault();
+              const status = await login(formData);
+              if (status === 200) {
+                navigate("/");
+              }
+            }}
           >
             <div className="p-5 ring-2 ring-white/20 rounded-lg max-w-[90%] bg-[#272727]/60 shadow-md">
               <h1 className="text-3xl font-medium">Login</h1>
@@ -58,10 +64,8 @@ const Login = () => {
                 </button>
               </div>
               <button
-                onClick={() => {
-                  login(formData);
-                }}
-                className="mt-2 w-full bg-white text-black py-1 text-lg font-semibold rounded-lg"
+                type="submit"
+                className="mt-2 w-full bg-white text-black py-1 text-lg font-semibold rounded-lg cursor-pointer hover:focus:bg-violet-600 hover:focus:text-white hover:focus:duration-300"
               >
                 Login
               </button>

@@ -26,8 +26,10 @@ export const login = async (formData) => {
       toast.success("Login Successfull!");
       localStorage.setItem("token", res?.data?.token);
       localStorage.setItem("userDetails", JSON.stringify(res?.data?.data));
-      window.location.href = "/";
+      // window.location.href = "/";
+      return res.status;
     }
+    return;
   } catch (err) {
     console.log(err);
     toast.error(

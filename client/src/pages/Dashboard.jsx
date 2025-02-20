@@ -26,7 +26,7 @@ const Dashboard = () => {
             <div className="z-50 sticky top-0 left-0 right-0 w-full py-2 sm:py-0 bg-[#121212]/30 backdrop-filter backdrop-blur-sm flex justify-between items-center">
               <Link
                 to={"/"}
-                className="text-white text-3xl sm:text-5xl font-bold"
+                className="text-transparent bg-clip-text bg-gradient-to-br from-rose-600 via-50% to-indigo-700 text-3xl sm:text-5xl font-bold"
               >
                 AI TaskX
               </Link>
@@ -45,7 +45,7 @@ const Dashboard = () => {
                 </Link>
               </div>
             </div>
-            <p className="my-2 text-xs sm:text-base text-slate-400">
+            <p className="my-2 text-xs sm:text-base text-gray-400">
               AI-powered task generation made easy! Task Maker leverages
               Generative AI to instantly create task ideas. Simplify planning,
               boost productivity, and streamline your workflow with intelligent
